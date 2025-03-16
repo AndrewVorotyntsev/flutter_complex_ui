@@ -1,5 +1,4 @@
 import 'package:bottom_sheet/bottom_sheet.dart';
-import 'package:complex_ui/surf_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -39,7 +38,7 @@ class MyHomePage extends StatelessWidget {
                   minHeight: 0.5,
                   initHeight: 0.5,
                   maxHeight: 1,
-                  anchors: [0.5, 1],
+                  anchors: [0.1, 0.5, 1],
                   context: context,
                   bottomSheetBorderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(14),
@@ -60,21 +59,26 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-// https://i.pinimg.com/originals/6c/96/fc/6c96fc182de7cf0f94da2b7ec111c6ab.jpg
 class ImageBottomSheet extends StatelessWidget {
   final ScrollController scrollController;
   final double bottomSheetOffset;
 
-  const ImageBottomSheet({required this.scrollController, required this.bottomSheetOffset});
+  const ImageBottomSheet({super.key, required this.scrollController, required this.bottomSheetOffset});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return CustomScrollView(
       controller: scrollController,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Stack(
+      slivers: [
+        SliverAppBar(
+          pinned: true, // позволяет закрепить заголовок
+          expandedHeight: (231 * (2 * bottomSheetOffset - 1)), // начальная высота
+          collapsedHeight: 60 + (bottomSheetOffset == 1 ? 20 : 0),
+          toolbarHeight: 40,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          automaticallyImplyLeading: false,
+          flexibleSpace: Stack(
             alignment: Alignment.bottomCenter,
             children: [
               if (bottomSheetOffset > 0.5)
@@ -91,48 +95,30 @@ class ImageBottomSheet extends StatelessWidget {
                   ),
                 ),
               Container(
-                height: 20,
+                height: 60,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(14), topRight: Radius.circular(14)),
                 ),
                 width: double.infinity,
-              ),
-            ],
-          ),
-          Column(
-            children: [
-              Text('position $bottomSheetOffset', style: Theme.of(context).textTheme.titleLarge),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(14), topRight: Radius.circular(14)),
+                child: Column(
+                  children: [
+                    SizedBox(height: 10),
+                    Container(width: 30, height: 2, color: Colors.grey),
+                    SizedBox(height: 10),
+                    Text('Heading', style: Theme.of(context).textTheme.headlineMedium, textAlign: TextAlign.center),
+                  ],
                 ),
-                child: Column(children: _children),
               ),
             ],
           ),
-        ],
-      ),
+        ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+            return ListTile(title: Text('Элемент списка #$index'));
+          }, childCount: 30),
+        ),
+      ],
     );
-  }
-}
-
-List<Widget> _children = [
-  const Text('14124'),
-  const _TestContainer(color: Colors.purple),
-  const Text('14124'),
-  const _TestContainer(color: Colors.green),
-  const Text('14124'),
-  const _TestContainer(color: Colors.indigoAccent),
-];
-
-class _TestContainer extends StatelessWidget {
-  final Color color;
-
-  const _TestContainer({required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(padding: const EdgeInsets.all(8), height: 100, color: color);
   }
 }
