@@ -1,6 +1,7 @@
 # complex_ui
 
-A new Flutter project.
+Репозиторий с интересными приемами верстки на Flutter.
+
 
 ## Image Bottom Sheet
 
